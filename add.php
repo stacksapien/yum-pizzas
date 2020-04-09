@@ -1,5 +1,7 @@
 <?php 
 
+	include('config/db_config.php');
+
 	$errors = array('email' =>'', 'title' =>'', 'ingredients' => '');
 	$email = $title = $ingredients = '';
 	// isset() with _POST checks if there was any post request made on add.php
@@ -50,8 +52,21 @@
 
 		// If there were no error we redirect
 		if(!array_filter($errors)){
-			// if there were any errors
-			header('Location: index.php');
+			// Storing the Data in DB
+			$email = mysqli_real_escape_string($conn, $email);
+			$title = mysqli_real_escape_string($conn, $title);
+			$ingredients = mysqli_real_escape_string($conn, $ingredients);
+
+			$sql = "INSERT INTO pizzas(title,email,ingredients) VALUES('$title','$email','$ingredients')";
+
+			// call the sql query and check if it returns true
+			if(mysqli_query($conn, $sql)){
+				header('Location: index.php');
+			}
+			else{
+				echo 'Query Error '.mysqli_error($conn);
+			}
+			
 		}
 	}
  ?>
